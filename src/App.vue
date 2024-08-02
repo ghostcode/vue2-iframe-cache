@@ -1,18 +1,42 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <nav>
+      <router-link to="/">Home</router-link> |
+      <router-link to="/about">About</router-link>
+    </nav>
+    <AboutView v-show="isIframe"></AboutView>
+    <div class="no-iframe" v-show="!isIframe">
+      <transition>
+        <keep-alive>
+          <router-view></router-view>
+        </keep-alive>
+      </transition>
+    </div>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
-
+import AboutView from './views/AboutView.vue'
 export default {
   name: 'App',
   components: {
-    HelloWorld
-  }
+    AboutView,
+  },
+  watch: {
+    $route(to, from) {
+      console.log(to, from)
+      this.isIframe = to.fullPath === '/about'
+      console.log('this.isIframe:', this.isIframe)
+    },
+  },
+  data() {
+    return {
+      isIframe: false,
+    }
+  },
+  beforeRouteEnter(to, from, next) {
+    console.log('to, from, next:', to, from, next)
+  },
 }
 </script>
 
@@ -23,6 +47,18 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+nav {
+  padding: 30px;
+}
+
+nav a {
+  font-weight: bold;
+  color: #2c3e50;
+}
+
+nav a.router-link-exact-active {
+  color: #42b983;
 }
 </style>
